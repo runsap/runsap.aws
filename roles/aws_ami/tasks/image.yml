@@ -1,0 +1,34 @@
+- name: Processing "{{ image.key }}"
+  ec2_ami_info:
+    region: "{{ region }}"
+    filters: "{{ image.value.filters }}"
+  register: aws_region_images_info
+
+- debug:
+    var: aws_region_images_info
+    verbosity: 2
+
+- name: Map user to image id
+  set_fact:
+    aws_image_users: >-
+      {{ aws_image_users | default({}) |
+         combine({aws_image_id: image.value.user | default(aws_inventory_ansible_user)}, recursive=True) }}
+    aws_image: >-
+      {{ aws_image | combine(
+        {image.key: {region: aws_image_id, 'os_platform': aws_image_platform}}, recursive=True) }}
+
+  vars:
+    aws_image_id: >-
+      {{ ( aws_region_images_info.images |
+            selectattr('name', 'defined') |
+            sort(attribute='creation_date') |
+            last
+          ).image_id }}
+    aws_image_platform: >-
+      {{ ( aws_region_images_info.images |
+            selectattr('name', 'defined') |
+            sort(attribute='creation_date') |
+            last
+          ).platform | default('linux') }}
+  when: aws_region_images_info.images | length > 0
+

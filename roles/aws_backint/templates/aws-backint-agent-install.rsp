@@ -1,0 +1,18 @@
+[DEFAULT]
+hana_sid = {{ ec2status.tags.Sap_hdb_sid | upper }}
+instance_region = {{ region }}
+installation_directory = {{ sap_aws_backint_install_dir }}
+hana_opt_dir = /usr/sap/{{ ec2status.tags.Sap_hdb_sid | upper }}/SYS/global/hdb/opt
+hana_systemdb_global_ini_file = /usr/sap/{{ ec2status.tags.Sap_hdb_sid | upper }}/SYS/global/hdb/custom/config/global.ini
+s3_bucket_name = {{ aws_caller_info['account'] }}-{{ env }}-hana-backups
+s3_bucket_owner_account_id = {{ aws_caller_info['account'] }}
+s3_bucket_region = {{ region }}
+# s3_sse_kms_arn = 
+s3_bucket_folder = {{ s3_bucket_folder }}
+install_awscli = y
+agent_tar_file = https://s3.amazonaws.com/awssap-backint-agent/binary/{{ sap_aws_backint_version }}/aws-backint-agent.tar.gz
+awscli_version_match = False
+modify_global_ini = modify
+perform_s3_validations = True
+3p_license_file_name = THIRD_PARTY_LICENSES.txt
+confirm_install = n

@@ -1,0 +1,7 @@
+---
+sap_aws_backint_version: 2.0.4.810
+sap_aws_backint_install_dir: /hana/shared
+sap_aws_backint_proxy: ""
+sap_aws_backint_tmp_dir: /tmp
+sap_aws_backint_downloads: 
+s3_bucket_folder: ''

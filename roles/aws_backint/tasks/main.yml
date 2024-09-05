@@ -1,0 +1,72 @@
+- name: Determine version of installed backint agent
+  shell: set -o pipefail && {{ sap_aws_backint_install_dir }}/aws-backint-agent/aws-backint-agent -v 2>/dev/null |  sed -E 's/^\"backint [0-9\.]+\" \"AWS Backint Agent ([0-9\.]+)\"$/\1/' # noqa 204
+  register: sap_aws_backint_installed_version
+  failed_when: false
+  changed_when: false
+  check_mode: no
+
+- debug: var=sap_aws_backint_installed_version
+
+- name: Add backint agent installation status to custom summary
+  set_fact:
+    custom_change_summary: "{{ custom_change_summary | default([]) + [ message|trim ] }}"
+  vars:
+    message: >-
+      {% if sap_aws_backint_installed_version.stdout | length == 0 %}
+        AWS Backint Agent {{ sap_aws_backint_version }} needs to be installed
+      {% elif sap_aws_backint_installed_version.stdout is version(sap_aws_backint_version, '<') %}
+        AWS Backint Agent needs to be upgraded {{ sap_aws_backint_installed_version.stdout }} -> {{ sap_aws_backint_version }}
+      {% elif sap_aws_backint_installed_version.stdout is version(sap_aws_backint_version, '>') %}
+        AWS Backint Agent needs to be downgraded {{ sap_aws_backint_installed_version.stdout }} -> {{ sap_aws_backint_version }}
+      {% else %}
+        AWS Backint Agent already installed with newer version. No action needed. current: {{ sap_aws_backint_installed_version.stdout }} requested: {{ sap_aws_backint_version }}
+      {% endif %}
+  changed_when: true
+  when:
+    - sap_aws_backint_installed_version.stdout != sap_aws_backint_version
+
+- block:
+
+    - name: Get the current caller identity information
+      aws_caller_info:
+      register: aws_caller_info
+      delegate_to: localhost
+      become: false
+
+    - name: Download required files
+      get_url:
+        url: "https://s3.amazonaws.com/awssap-backint-agent/binary/{{ sap_aws_backint_version }}/install-aws-backint-agent"
+        dest: "/tmp/install-aws-backint-agent"
+        force: yes
+        mode: '770'
+      become: yes
+      become_user: root
+
+    - name: Create response file
+      template:
+        src: aws-backint-agent-install.rsp
+        dest: "{{ sap_aws_backint_tmp_dir }}/aws-backint-agent-install.rsp"
+      become: yes
+      become_user: root
+
+    - name: Perform backint agent installation
+      shell: "/tmp/install-aws-backint-agent -f /tmp/aws-backint-agent-install.rsp -m silent -a yes -d 2>&1 | tee -a /tmp/backint-install.log" # noqa 204
+      environment:
+        https_proxy: "{{ sap_aws_backint_proxy }}"
+        PATH: /usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin
+        no_proxy: localhost,127.0.0.1,localaddress,.localdomain.com
+        PYTHONIOENCODING: utf8
+        HOME: /home/ec2-user
+      become: yes
+      become_user: root
+      when: not ansible_check_mode
+
+    - name: Check version of installed backint agent
+      shell: set -o pipefail && {{ sap_aws_backint_install_dir }}/aws-backint-agent/aws-backint-agent -v 2>/dev/null |  sed -E 's/^\"backint [0-9\.]+\" \"AWS Backint Agent ([0-9\.]+)\"$/\1/' # noqa 204
+      register: sap_aws_backint_version_check
+      failed_when: false
+      changed_when: false
+      check_mode: no
+    - debug: var=sap_aws_backint_version_check
+
+  when: sap_aws_backint_installed_version.stdout | length == 0 or sap_aws_backint_installed_version.stdout is version(sap_aws_backint_version, '!=') 

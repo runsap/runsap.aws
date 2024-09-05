@@ -1,0 +1,5 @@
+- name: Collect information about used ami's
+  include_tasks: image.yml
+  with_dict: "{{ aws_image }}"
+  loop_control:
+    loop_var: image

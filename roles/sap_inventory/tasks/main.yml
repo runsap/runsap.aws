@@ -1,0 +1,62 @@
+# used for efs
+- name: Lookup subnet id's for availability zones
+  include_tasks: az.yml
+  with_dict: "{{ aws_places }}"
+  tags: always
+
+- name: processing inventory
+  set_fact:
+    ec2:
+      hosts: "{{hosts_data}}"
+  vars:
+    hosts_data: |-
+      {% set ns = namespace() %}
+      {% set ns.hosts = [] %}
+      {% for group in sap_groups %}
+      {% set host_data_group = {
+        'gid': group.gid,
+        'ec2': group.ec2 | default({}),
+        'os': group.os | default({}),
+        'sap': group.sap | default({})
+      } %}
+      {%   for host in group.hosts %}
+      {%     set host_data_base = host_defaults
+              | combine(host_templates[host.template], recursive=True)
+              | combine(host_data_group, recursive=True)
+              | combine(host, recursive=True) 
+              | combine({'ec2': aws_places[host.place]}, recursive=True) %}
+      {%     if host.hostname is defined %}
+      {%       set host_name = host.hostname %}
+      {%     else %}
+      {%       set host_name = hostname_prefix ~ group.gid|lower ~ '' ~ host.id %}
+      {%     endif %}
+      {%     if hostvars[host_name].ec2status.image_id is defined %}
+      {%       set image_id = hostvars[host_name].ec2status.image_id %}
+      {%     else %}
+      {%       set image_id = aws_image[host_data_base.ec2.image][host_data_base.ec2.region] | default('unknown') %}
+      {%     endif %}
+      {%     set os_license = aws_image[host_data_base.ec2.image]['os_license'] | default('unknown') %}
+      {%     set host_data_add =
+                {
+                  'name': host_name,
+                  'ec2': {'image_id': image_id, 'os_license': os_license }
+                } %}
+      {%     set host_data = host_data_base | combine(host_data_add, recursive=True) %}
+      {%     set ns.hosts = ns.hosts + [host_data] %}
+      {%   endfor %}
+      {% endfor %}
+      {{ ns.hosts }}
+
+- name: ec2.hosts
+  debug:
+    var: ec2
+    verbosity: 1
+
+- name: Set fact for all hosts names
+  set_fact:
+    vm_all_host_names: "{{ ec2.hosts | json_query('[*].name') }}"
+
+- name: vm_all_host_names
+  debug:
+    var: vm_all_host_names
+    verbosity: 1
