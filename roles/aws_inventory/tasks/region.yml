@@ -20,10 +20,10 @@
 #           map(attribute='value.os_platform') | first) | default('unknown')
 #       }}
 
-- name: Debug instance tags
-  debug:
-    msg: "{{ item.tags }}"
-  loop: "{{ ansible_instance_facts.instances }}"
+# - name: Debug instance tags
+#   debug:
+#     msg: "{{ item.tags }}"
+#   loop: "{{ ansible_instance_facts.instances }}"
 
 - name: Add instance to dynamic inventory
   add_host:
