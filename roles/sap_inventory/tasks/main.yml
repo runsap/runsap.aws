@@ -45,7 +45,6 @@
       {%     set ns.hosts = ns.hosts + [host_data] %}
       {%   endfor %}
       {% endfor %}
-      
       {{ ns.hosts }}
 
 - name: ec2.hosts
