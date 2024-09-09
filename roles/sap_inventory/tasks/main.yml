@@ -43,6 +43,21 @@
                 } %}
       {%     set host_data = host_data_base | combine(host_data_add, recursive=True) %}
       {%     set ns.hosts = ns.hosts + [host_data] %}
+      {%     if host_data.ec2.tags.Ansible_managed == "True" %}
+      {%       if (cli_customer is not defined or cli_customer | length == 0) or 
+                  (cli_customer is defined and host_data.ec2.tags.Customer in cli_customer.split(',')) %}
+      {%         if (cli_sap_landscape_role is not defined or cli_sap_landscape_role | length == 0) or 
+                    (cli_sap_landscape_role is defined and host_data.ec2.tags.Sap_landscape_role | lower in (cli_sap_landscape_role.split(',') | map('lower') | list)) %}
+      {%           if (cli_sap_env is not defined or cli_sap_env | length == 0) or 
+                      (cli_sap_env is defined and host_data.ec2.tags.Sap_env | lower in (cli_sap_env.split(',') | map('lower') | list)) %}
+      {%             if cli_exclude_sap_types is not defined or 
+                         (host_data.ec2.tags.Sap_type | intersect(cli_exclude_sap_types.split(',')) | length == 0) %}
+      {%               set ns.hosts = ns.hosts + [host_data] %}
+      {%             endif %}
+      {%           endif %}
+      {%         endif %}
+      {%       endif %}
+      {%     endif %}
       {%   endfor %}
       {% endfor %}
       {{ ns.hosts }}
