@@ -1,8 +1,8 @@
 # used for efs
-- name: Lookup subnet id's for availability zones
-  include_tasks: az.yml
-  with_dict: "{{ aws_places }}"
-  tags: always
+# - name: Lookup subnet id's for availability zones
+#   include_tasks: az.yml
+#   with_dict: "{{ aws_places }}"
+#   tags: always
 
 - name: processing inventory
   set_fact:
