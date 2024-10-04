@@ -1,0 +1,6 @@
+skip_list:
+  - experimental  # Skip experimental rules
+verbosity: 1
+exclude_paths:
+  - docs/  # Exclude docs folder
+
