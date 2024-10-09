@@ -3,4 +3,9 @@ skip_list:
 verbosity: 1
 exclude_paths:
   - docs/  # Exclude docs folder
+  - roles/aws_inventory
+  - roles/aws_inventory_v2
+  - roles/sap_inventory
+  - roles/sap_inventory_v2
+
 
