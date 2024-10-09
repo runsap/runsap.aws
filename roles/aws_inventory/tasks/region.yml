@@ -6,7 +6,7 @@
   check_mode: no
 
 # - debug:
-#     msg: "The OS Platform for image_id {{ target_image_id }} is {{ os_platform }}"   
+#     msg: "The OS Platform for image_id {{ target_image_id }} is {{ os_platform }}"
 #   loop: "{{ ansible_instance_facts.instances }}"
 #   loop_control:
 #     label: "{{ item.tags.Name }} - {{ item.instance_id }}"
@@ -26,9 +26,9 @@
 #   loop: "{{ ansible_instance_facts.instances }}"
 
 - name: Add instance to dynamic inventory
-  add_host:
+  ansible.builtin.add_host:
     hostname: "{{ item.tags.Name }}"
-    
+
     ansible_host: "{{ item[return_address_for_ansible_host] if item.state.name == 'running' else '127.0.30.1' }}"
     ansible_user: "{{ 'sap_admin' if item.tags.Operating_system == 'windows' else aws_tmp_user }}"
     ansible_password: "{{ winrm_password if item.tags.Operating_system == 'windows' else '' }}"
@@ -48,7 +48,7 @@
     host_data: "{{ ( hostvars['localhost']['ec2']['hosts']
       | json_query(\"[?name=='\" + item.tags.Name + \"']\") )[0]
       | default({}) }}"
-    
+
   changed_when: false
   loop: "{{ ansible_instance_facts.instances }}"
   loop_control:
@@ -57,7 +57,7 @@
     aws_tmp_user: >-
       {{ aws_inventory_ansible_user
       if
-        ( item.tags.Provision_status is defined and item.tags.Provision_status == 'done' ) 
+        ( item.tags.Provision_status is defined and item.tags.Provision_status == 'done' )
       else
         aws_image_users[item.image_id] }}
 

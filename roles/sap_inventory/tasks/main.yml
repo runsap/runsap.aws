@@ -1,11 +1,11 @@
 # used for efs
 - name: Lookup subnet id's for availability zones
-  include_tasks: az.yml
+  ansible.builtin.include_tasks: az.yml
   with_dict: "{{ aws_places }}"
   tags: always
 
 - name: processing inventory
-  set_fact:
+  ansible.builtin.set_fact:
     ec2:
       hosts: "{{hosts_data}}"
   vars:
@@ -23,7 +23,7 @@
       {%     set host_data_base = host_defaults
               | combine(host_templates[host.template], recursive=True)
               | combine(host_data_group, recursive=True)
-              | combine(host, recursive=True) 
+              | combine(host, recursive=True)
               | combine({'ec2': aws_places[host.place]}, recursive=True) %}
       {%     if host.hostname is defined %}
       {%       set host_name = host.hostname %}
@@ -48,15 +48,15 @@
       {{ ns.hosts }}
 
 - name: ec2.hosts
-  debug:
+  ansible.builtin.debug:
     var: ec2
     verbosity: 1
 
 - name: Set fact for all hosts names
-  set_fact:
+  ansible.builtin.set_fact:
     vm_all_host_names: "{{ ec2.hosts | json_query('[*].name') }}"
 
 - name: vm_all_host_names
-  debug:
+  ansible.builtin.debug:
     var: vm_all_host_names
     verbosity: 1

@@ -5,7 +5,7 @@
 #   tags: always
 
 - name: processing inventory
-  set_fact:
+  ansible.builtin.set_fact:
     ec2:
       hosts: "{{hosts_data}}"
   vars:
@@ -43,15 +43,15 @@
       {{ ns.hosts }}
 
 - name: ec2.hosts
-  debug:
+  ansible.builtin.debug:
     var: ec2
     verbosity: 1
 
 - name: Set fact for all hosts names
-  set_fact:
+  ansible.builtin.set_fact:
     vm_all_host_names: "{{ ec2.hosts | json_query('[*].name') }}"
 
 - name: vm_all_host_names
-  debug:
+  ansible.builtin.debug:
     var: vm_all_host_names
     verbosity: 1

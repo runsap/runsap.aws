@@ -1,13 +1,13 @@
 ---
-- debug:
+- ansible.builtin.debug:
     msg: "{{aws_places | json_query('*.region') | unique}}"
     verbosity: 2
 
 - name: Processing regions
-  include_tasks: region.yml
+  ansible.builtin.include_tasks: region.yml
   loop: "{{ aws_places | json_query('*.region') | unique }}"
   loop_control:
     loop_var: region
 
-- debug:
+- ansible.builtin.debug:
     var: aws_image_users

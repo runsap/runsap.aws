@@ -4,7 +4,7 @@
     filters: "{{ image.value.filters }}"
   register: aws_region_images_info
 
-- debug:
+- ansible.builtin.debug:
     var: aws_region_images_info
     verbosity: 2
 

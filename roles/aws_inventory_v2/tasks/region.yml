@@ -5,7 +5,6 @@
   register: ansible_instance_facts
   check_mode: no
 
-
 - name: Add instance to dynamic inventory
   add_host:
     hostname: "{{ item.tags.Name }}"
