@@ -17,3 +17,6 @@ This collection helps you in managing several aws activities.
 - aws_backint
 - aws_intentory
 - sap_inventory
+
+**aws_ami**
+The **aws_ami** role is used to collect the ami id to present this to the terraform role so it can be input for the terrform run.
