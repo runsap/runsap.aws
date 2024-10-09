@@ -5,7 +5,8 @@
   changed_when: false
   check_mode: no
 
-- ansible.builtin.debug: var=sap_aws_backint_installed_version
+- name: Debug message
+  ansible.builtin.debug: var=sap_aws_backint_installed_version
 
 - name: Add backint agent installation status to custom summary
   ansible.builtin.set_fact:
@@ -25,7 +26,8 @@
   when:
     - sap_aws_backint_installed_version.stdout != sap_aws_backint_version
 
-- block:
+- name: Block tasks
+  block:
 
     - name: Get the current caller identity information
       aws_caller_info:
