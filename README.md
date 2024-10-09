@@ -16,9 +16,7 @@ This collection helps you in managing several aws activities.
 - aws_ami (depricated)
 - aws_backint
 - aws_intentory (depricated)
-- aws_intentory_v2 (depricated)
 - sap_inventory (depricated)
-- sap_inventory_v2 (depricated)
 - sap_inventory_v3
 
 **_v3**

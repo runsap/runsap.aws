@@ -7,5 +7,3 @@ exclude_paths:
   - roles/aws_inventory_v2
   - roles/sap_inventory
   - roles/sap_inventory_v2
-
-
