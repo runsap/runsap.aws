@@ -16,4 +16,6 @@ This collection helps you in managing several aws activities.
 - aws_ami
 - aws_backint
 - aws_intentory
+- aws_intentory_v2
 - sap_inventory
+- sap_inventory_v2

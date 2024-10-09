@@ -30,16 +30,11 @@
       {%     else %}
       {%       set host_name = hostname_prefix ~ group.gid|lower ~ '' ~ host.id %}
       {%     endif %}
-      {%     if hostvars[host_name].ec2status.image_id is defined %}
-      {%       set image_id = hostvars[host_name].ec2status.image_id %}
-      {%     else %}
-      {%       set image_id = aws_image[host_data_base.ec2.image][host_data_base.ec2.region] | default('unknown') %}
-      {%     endif %}
       {%     set os_license = aws_image[host_data_base.ec2.image]['os_license'] | default('unknown') %}
       {%     set host_data_add =
                 {
                   'name': host_name,
-                  'ec2': {'image_id': image_id, 'os_license': os_license }
+                  'ec2': {'os_license': os_license }
                 } %}
       {%     set host_data = host_data_base | combine(host_data_add, recursive=True) %}
       {%     set ns.hosts = ns.hosts + [host_data] %}

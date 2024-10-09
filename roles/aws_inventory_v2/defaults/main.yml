@@ -1,0 +1,19 @@
+---
+# The aws_inventory_filters variable is defined globally with the values below:
+#aws_inventory_filters:
+#  instance-state-name: running
+#  "tag:Ansible_managed": "True"
+aws_inventory_filters: {}
+
+# All the instances will be members of the group below
+aws_inventory_group: ec2hosts
+
+# Ansible user to use for ssh logon after post-provisioning steps
+# were finished
+aws_inventory_ansible_user: sap-aws-ansible
+
+# Default ansible connection method
+ansible_connection: ssh
+
+# Default value of the address to return
+return_address_for_ansible_host: public_ip_address
