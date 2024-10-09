@@ -1,15 +1,16 @@
 - name: Processing "{{ image.key }}"
-  ec2_ami_info:
+  amazon.aws.ec2_ami_info:
     region: "{{ region }}"
     filters: "{{ image.value.filters }}"
   register: aws_region_images_info
 
-- debug:
+- name: Debug aws_region_images_info
+  ansible.builtin.debug:
     var: aws_region_images_info
     verbosity: 2
 
 - name: Map user to image id
-  set_fact:
+  ansible.builtin.set_fact:
     aws_image_users: >-
       {{ aws_image_users | default({}) |
          combine({aws_image_id: image.value.user | default(aws_inventory_ansible_user)}, recursive=True) }}
@@ -34,4 +35,3 @@
     #         last
     #       ).platform | default('linux') }}
   when: aws_region_images_info.images | length > 0
-

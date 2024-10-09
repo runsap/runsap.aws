@@ -34,9 +34,8 @@
   loop_control:
     label: "{{ item.tags.Name }} - {{ item.instance_id }}/{{ aws_tmp_user }}"
   vars:
+    lookup_host_data: "{{ ( hostvars['localhost']['ec2']['hosts']
+      | json_query(\"[?name=='\" + item.tags.Name + \"']\") )[0]
+      | default({}) }}"
     aws_tmp_user: >-
-      {{ aws_inventory_ansible_user
-      if
-        ( item.tags.Provision_status is defined and item.tags.Provision_status == 'done' )
-      else
-        aws_image_users[item.image_id] }}
+        {{ aws_image[lookup_host_data.ec2.image].user }}
