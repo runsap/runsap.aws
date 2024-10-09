@@ -52,7 +52,7 @@ Role `aws_inventory` needs to be executed before this role.
   become: False
   tasks:
     - name: Custom summary
-      include_tasks: custom_summary.yml
+      ansible.builtin.include_tasks: custom_summary.yml
 ```
 
 ## Testen van de backup

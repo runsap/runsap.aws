@@ -13,3 +13,17 @@ The sap_groups, host_defaults and the templates are merged together in this role
 2. Create the host_data variable
 3. Add hosts to dynamic inventory with the host_data
 
+Example
+-------
+
+```yaml
+- name: Create the ec2host inventory with running instances
+  hosts: localhost
+  gather_facts: False
+  become: False
+  roles:
+    - role: runsap.aws.sap_inventory_v3
+      vars:
+        aws_inventory_filters:
+          instance-state-name: ["running"]
+```

@@ -1,5 +1,5 @@
 - name: "Collect aws facts for instances in region '{{ region }}'"
-  ec2_instance_info:
+  amazon.aws.ec2_instance_info:
     region: "{{ region }}"
     filters: "{{ aws_inventory_filters }}"
   register: ansible_instance_facts
@@ -39,4 +39,3 @@
       | default({}) }}"
     aws_tmp_user: >-
         {{ aws_image[lookup_host_data.ec2.image].user }}
-

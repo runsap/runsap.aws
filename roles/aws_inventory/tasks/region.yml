@@ -1,29 +1,9 @@
 - name: "Collect aws facts for instances in region '{{ region }}'"
-  ec2_instance_info:
+  amazon.aws.ec2_instance_info:
     region: "{{ region }}"
     filters: "{{ aws_inventory_filters }}"
   register: ansible_instance_facts
   check_mode: no
-
-# - debug:
-#     msg: "The OS Platform for image_id {{ target_image_id }} is {{ os_platform }}"
-#   loop: "{{ ansible_instance_facts.instances }}"
-#   loop_control:
-#     label: "{{ item.tags.Name }} - {{ item.instance_id }}"
-#   vars:
-#     # Find the image that matches the target_image_id and extract its os_platform
-#     target_image_id: "{{ item.image_id }}"  # Replace with the desired image_id
-#     os_platform: >-
-#       {{
-#         (aws_image | dict2items |
-#           selectattr('value.' ~ region, 'equalto', target_image_id) |
-#           map(attribute='value.os_platform') | first) | default('unknown')
-#       }}
-
-# - name: Debug instance tags
-#   debug:
-#     msg: "{{ item.tags }}"
-#   loop: "{{ ansible_instance_facts.instances }}"
 
 - name: Add instance to dynamic inventory
   ansible.builtin.add_host:
@@ -60,4 +40,3 @@
         ( item.tags.Provision_status is defined and item.tags.Provision_status == 'done' )
       else
         aws_image_users[item.image_id] }}
-
