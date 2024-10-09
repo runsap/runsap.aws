@@ -1,0 +1,28 @@
+- name: "Get facts for availability zone {{ item.value.availability_zone }}"
+  ec2_vpc_subnet_info:
+    region: "{{ item.value.region }}"
+    filters:
+      availability-zone: "{{ item.value.availability_zone }}"
+      vpc-id: "{{ item.value.vpc_id }}"
+  register: az_info
+  tags: always
+
+- name: "Fail if subnet can't be determined"
+  fail:
+    msg: "Subnet for availability zone {{ item.value.availability_zone }} can't be determined."
+  when: az_info.subnets[0].id is not defined
+  tags: always
+
+- name: Add subnet info to place
+  set_fact:
+    aws_places: "{{ aws_places |
+      combine({ item.key: { 'subnet_id': az_info.subnets[0].id, 'subnets': az_info.subnets } }, recursive=True) }}"
+
+# - name: Fail if subnet belonging to the zone isn't /24
+#   fail:
+#     msg: "Subnet '{{ azt.cidr_block }}' isn't /24"
+#   when: ( azt.cidr_block | ipaddr('size') | int ) != 256
+#   loop: "{{ az_info.subnets }}"
+#   loop_control:
+#     loop_var: azt
+#     label: "{{ azt.cidr_block }}"
