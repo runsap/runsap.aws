@@ -3,10 +3,10 @@
     region: "{{ region }}"
     filters: "{{ aws_inventory_filters }}"
   register: ansible_instance_facts
-  check_mode: no
+  check_mode: false
 
 - name: Add instance to dynamic inventory
-  add_host:
+  ansible.builtin.add_host:
     hostname: "{{ item.tags.Name }}"
 
     ansible_host: "{{ item[return_address_for_ansible_host] if item.state.name == 'running' else '127.0.30.1' }}"

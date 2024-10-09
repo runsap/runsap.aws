@@ -35,4 +35,3 @@
     #         last
     #       ).platform | default('linux') }}
   when: aws_region_images_info.images | length > 0
-

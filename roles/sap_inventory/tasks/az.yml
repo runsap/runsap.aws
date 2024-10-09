@@ -8,12 +8,12 @@
   tags: always
 
 - name: "Fail if subnet can't be determined"
-  fail:
+  ansible.builtin.fail:
     msg: "Subnet for availability zone {{ item.value.availability_zone }} can't be determined."
   when: az_info.subnets[0].id is not defined
   tags: always
 
 - name: Add subnet info to place
-  set_fact:
+  ansible.builtin.set_fact:
     aws_places: "{{ aws_places |
       combine({ item.key: { 'subnet_id': az_info.subnets[0].id, 'subnets': az_info.subnets } }, recursive=True) }}"
