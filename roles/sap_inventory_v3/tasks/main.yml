@@ -2,12 +2,11 @@
 - name: Show to the end user that we are using the v3 role
   ansible.builtin.debug:
     msg: |
-    ----------------------------------------------------------
+      ----------------------------------------------------------
 
-    Role:
-      runsap.aws.sap_inventory_v3
+      Role: runsap.aws.sap_inventory_v3
 
-    ----------------------------------------------------------
+      ----------------------------------------------------------
 
 #
 # Create hosts_data
