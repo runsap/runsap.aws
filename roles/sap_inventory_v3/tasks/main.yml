@@ -1,0 +1,14 @@
+---
+#
+# Create hosts_data
+#
+- name: Create hosts_data / sap_inventory
+  include_tasks: create_host_data.yml
+#
+# Create dynamic inventory
+#
+- name: Processing regions and add hosts to dynamic inventory
+  include_tasks: region.yml
+  loop: "{{ aws_places | json_query('*.region') | unique }}"
+  loop_control:
+    loop_var: region
