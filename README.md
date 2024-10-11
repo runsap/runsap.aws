@@ -13,10 +13,10 @@ This collection helps you in managing several aws activities.
 
 **Roles**
 
-- aws_ami (depricated)
+- aws_ami (deprecated)
 - aws_backint
-- aws_intentory (depricated)
-- sap_inventory (depricated)
+- aws_intentory (deprecated)
+- sap_inventory (deprecated)
 - sap_inventory_v3
 
 **_v3**
