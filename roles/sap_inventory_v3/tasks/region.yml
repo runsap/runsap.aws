@@ -5,18 +5,42 @@
   register: ansible_instance_facts
   check_mode: false
 
+# - name: Debugging specific values
+#   debug:
+#     msg: "{{ item.tags.Name }} {{ item.tags.Host_name }}"
+#   loop: "{{ ansible_instance_facts.instances }}"
+#   loop_control:
+#     label: "{{ item.tags.Name }} "
+#   vars:
+#     lookup_host_data: "{{ ( hostvars['localhost']['ec2']['hosts']
+#       | json_query(\"[?name=='\" + item.tags.Host_name + \"']\") )[0]
+#       | default({}) }}"
+
+- name: Debugging specific values
+  debug:
+    msg: "{{ item.tags.Name }} {{ item.tags.Host_name }} {{ os_type }} {{lookup_host_data.ec2.image}} {{ lookup_host_data.ec2.tags }}"
+  loop: "{{ ansible_instance_facts.instances }}"
+  loop_control:
+    label: "{{ item.tags.Name }} "
+  vars:
+    os_type: "{{ aws_image[lookup_host_data.ec2.image].os_type }}"
+    lookup_host_data: "{{ ( hostvars['localhost']['ec2']['hosts']
+      | json_query(\"[?name=='\" + item.tags.Host_name + \"']\") )[0]
+      | default({}) }}"
+
+
 - name: Add instance to dynamic inventory
   ansible.builtin.add_host:
-    hostname: "{{ item.tags.Name }}"
+    hostname: "{{ item.tags.Host_name }}"
 
     ansible_host: "{{ item[return_address_for_ansible_host] if item.state.name == 'running' else '127.0.30.1' }}"
-    ansible_user: "{{ 'sap_admin' if item.tags.Operating_system == 'windows' else aws_tmp_user }}"
-    ansible_password: "{{ winrm_password if item.tags.Operating_system == 'windows' else '' }}"
-    ansible_connection: "{{ 'winrm' if item.tags.Operating_system == 'windows' else 'ssh' }}"
-    ansible_port: "{{ '5986' if item.tags.Operating_system == 'windows' else '22' }}"
+    ansible_user: "{{ 'sap_admin' if os_type == 'windows' else aws_tmp_user }}"
+    ansible_password: "{{ winrm_password if os_type == 'windows' else '' }}"
+    ansible_connection: "{{ 'winrm' if os_type == 'windows' else 'ssh' }}"
+    ansible_port: "{{ '5986' if os_type == 'windows' else '22' }}"
     ansible_winrm_transport: basic
     ansible_winrm_server_cert_validation: ignore
-    ansible_become_method: "{{ 'runas' if item.tags.Operating_system == 'windows' else 'sudo' }}"
+    ansible_become_method: "{{ 'runas' if os_type == 'windows' else 'sudo' }}"
 
     groups:
       - "{{ aws_inventory_group }}"
@@ -25,17 +49,18 @@
     ec2status: "{{ item }}"
 
     # host_data: per-host processed group_vars template inventory
-    host_data: "{{ ( hostvars['localhost']['ec2']['hosts']
-      | json_query(\"[?name=='\" + item.tags.Name + \"']\") )[0]
+    host_data: "{{ (hostvars['localhost']['ec2']['hosts']
+      | json_query(\"[?name=='\" + item.tags.Host_name + \"']\"))[0]
       | default({}) }}"
 
   changed_when: false
   loop: "{{ ansible_instance_facts.instances }}"
   loop_control:
-    label: "{{ item.tags.Name }} - {{ item.instance_id }}/{{ aws_tmp_user }}"
+    label: "{{ item.tags.Host_name }} - {{ item.instance_id }}/{{ aws_tmp_user }}"
   vars:
-    lookup_host_data: "{{ ( hostvars['localhost']['ec2']['hosts']
-      | json_query(\"[?name=='\" + item.tags.Name + \"']\") )[0]
+    os_type: "{{ aws_image[lookup_host_data.ec2.image].os_type }}"
+    lookup_host_data: "{{ (hostvars['localhost']['ec2']['hosts']
+      | json_query(\"[?name=='\" + item.tags.Host_name + \"']\"))[0]
       | default({}) }}"
     aws_tmp_user: >-
         {{ aws_image[lookup_host_data.ec2.image].user }}
