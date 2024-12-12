@@ -1,6 +1,8 @@
 runsap.aws.sap_aws_inventory
 ============================
 
+[![Lint Ansible Collection](https://github.com/runsap/runsap.aws/actions/workflows/lint.yml/badge.svg)](https://github.com/runsap/runsap.aws/actions/workflows/lint.yml)
+
 Introduction
 ------------
 

@@ -7,7 +7,7 @@
 
 # - name: Debugging specific values
 #   debug:
-#     msg: "{{ item.tags.Name }} {{ item.tags.Host_name }}"
+#     msg: "{{ item.tags.Name }} {{ item.tags.Host_name }} {{ lookup_host_data.ec2.image }}"
 #   loop: "{{ ansible_instance_facts.instances }}"
 #   loop_control:
 #     label: "{{ item.tags.Name }} "
@@ -27,7 +27,6 @@
     lookup_host_data: "{{ ( hostvars['localhost']['ec2']['hosts']
       | json_query(\"[?name=='\" + item.tags.Host_name + \"']\") )[0]
       | default({}) }}"
-
 
 - name: Add instance to dynamic inventory
   ansible.builtin.add_host:
