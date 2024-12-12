@@ -1,8 +1,7 @@
-
 - name: Processing inventory
   ansible.builtin.set_fact:
     ec2:
-      hosts: "{{hosts_data}}"
+      hosts: "{{ hosts_data }}"
   vars:
     hosts_data: |-
       {% set ns = namespace() %}
@@ -26,10 +25,10 @@
       {%       set host_name = hostname_prefix ~ group.gid|lower ~ '' ~ host.id %}
       {%     endif %}
       {%     set os_license = aws_image[host_data_base.ec2.image]['os_license'] | default('unknown') %}
+      {%     set os_type = aws_image[host_data_base.ec2.image]['os_type'] | default('unknown') %}
       {%     set host_data_add =
                 {
-                  'name': host_name,
-                  'ec2': {'os_license': os_license }
+                  'name': host_name
                 } %}
       {%     set host_data = host_data_base | combine(host_data_add, recursive=True) %}
       {%     set ns.hosts = ns.hosts + [host_data] %}
@@ -50,3 +49,4 @@
   ansible.builtin.debug:
     var: vm_all_host_names
     verbosity: 1
+
