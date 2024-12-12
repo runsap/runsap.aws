@@ -49,4 +49,3 @@
   ansible.builtin.debug:
     var: vm_all_host_names
     verbosity: 1
-

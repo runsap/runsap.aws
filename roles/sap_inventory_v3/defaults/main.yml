@@ -1,6 +1,6 @@
 ---
 # The aws_inventory_filters variable is defined globally with the values below:
-#aws_inventory_filters:
+# aws_inventory_filters:
 #  instance-state-name: running
 #  "tag:Ansible_managed": "True"
 aws_inventory_filters: {}

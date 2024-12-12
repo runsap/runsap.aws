@@ -15,5 +15,4 @@
 
 - name: Add subnet info to place
   ansible.builtin.set_fact:
-    aws_places: "{{ aws_places |
-      combine({ item.key: { 'subnet_id': az_info.subnets[0].id, 'subnets': az_info.subnets } }, recursive=True) }}"
+    aws_places: "{{ aws_places | combine({item.key: {'subnet_id': az_info.subnets[0].id, 'subnets': az_info.subnets}}, recursive=True) }}"

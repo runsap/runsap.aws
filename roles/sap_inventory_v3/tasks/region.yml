@@ -7,7 +7,7 @@
 
 # - name: Debugging specific values
 #   debug:
-#     msg: "{{ item.tags.Name }} {{ item.tags.Host_name }}"
+#     msg: "{{ item.tags.Name }} {{ item.tags.Host_name }} {{ lookup_host_data.ec2.image }}"
 #   loop: "{{ ansible_instance_facts.instances }}"
 #   loop_control:
 #     label: "{{ item.tags.Name }} "
@@ -16,17 +16,17 @@
 #       | json_query(\"[?name=='\" + item.tags.Host_name + \"']\") )[0]
 #       | default({}) }}"
 
-- name: Debugging specific values
-  debug:
-    msg: "{{ item.tags.Name }} {{ item.tags.Host_name }} {{ os_type }} {{lookup_host_data.ec2.image}} {{ lookup_host_data.ec2.tags }}"
-  loop: "{{ ansible_instance_facts.instances }}"
-  loop_control:
-    label: "{{ item.tags.Name }} "
-  vars:
-    os_type: "{{ aws_image[lookup_host_data.ec2.image].os_type }}"
-    lookup_host_data: "{{ ( hostvars['localhost']['ec2']['hosts']
-      | json_query(\"[?name=='\" + item.tags.Host_name + \"']\") )[0]
-      | default({}) }}"
+# - name: Debugging specific values
+#   debug:
+#     msg: "{{ item.tags.Name }} {{ item.tags.Host_name }} {{ os_type }} {{lookup_host_data.ec2.image}} {{ lookup_host_data.ec2.tags }}"
+#   loop: "{{ ansible_instance_facts.instances }}"
+#   loop_control:
+#     label: "{{ item.tags.Name }} "
+#   vars:
+#     os_type: "{{ aws_image[lookup_host_data.ec2.image].os_type }}"
+#     lookup_host_data: "{{ ( hostvars['localhost']['ec2']['hosts']
+#       | json_query(\"[?name=='\" + item.tags.Host_name + \"']\") )[0]
+#       | default({}) }}"
 
 
 - name: Add instance to dynamic inventory
