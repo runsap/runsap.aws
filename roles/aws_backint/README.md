@@ -24,35 +24,11 @@ Role `aws_inventory` needs to be executed before this role.
 
 ```yaml
 ---
-- hosts: localhost
-  gather_facts: False
-  become: False
-  roles:
-    - aws_checks
-    - role: aws_inventory
-      vars:
-        aws_inventory_filters_instance_states: running
-
-- hosts: ec2hosts
-  gather_facts: True
-  become: True
-  roles:
-    - role: sap_aws_backint
-      when:
-        - ec2status.state.name == 'running'
-        - ('Sap_env' in ec2status.tags)
-        - ('Sap_deploy' in ec2status.tags)
-        - ec2status.tags.Sap_deploy == 'True'
-        - ('Sap_deploy_status' in ec2status.tags)
-        - ec2status.tags.Sap_deploy_status == 'done'
-        - ec2status.tags.Sap_class == 'db'
-
-- hosts: localhost
-  gather_facts: False
-  become: False
-  tasks:
-    - name: Custom summary
-      ansible.builtin.include_tasks: custom_summary.yml
+- include_role:
+    name: runsap.aws.aws_backint
+  vars:
+    sap_aws_backint_version: 2.0.3.755
+    s3_bucket_name: "{{ aws_caller_info['account'] }}-{{ env }}-hana-backups"
 ```
 
 ## Testen van de backup
