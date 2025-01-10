@@ -4,5 +4,5 @@ sap_aws_backint_install_dir: /hana/shared
 sap_aws_backint_proxy: ""
 sap_aws_backint_tmp_dir: /tmp
 sap_aws_backint_downloads:
-s3_bucket_name: "{{ s3_bucket_name }}"
+s3_bucket_name: myuniquebucket123
 s3_bucket_folder: ''
